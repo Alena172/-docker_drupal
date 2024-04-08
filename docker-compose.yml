@@ -1,11 +1,37 @@
-version: '3'
+version: '3.8'
+
 services:
   drupal:
-    build: .
+    image: drupal:latest
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
-      - ./drupal-modules:/var/www/html/modules
-      - ./drupal-profiles:/var/www/html/profiles
-      - ./drupal-sites:/var/www/html/sites
-      - ./drupal-themes:/var/www/html/themes
+      - drupal-modules:/var/www/html/modules
+      - drupal-profiles:/var/www/html/profiles
+      - drupal-themes:/var/www/html/themes
+      - drupal-sites:/var/www/html/sites
+    environment:
+      - DRUPAL_PROFILE=standard
+      - DRUPAL_SITE_NAME=My Drupal Site
+    restart: always
+
+  mysql:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root_password
+    restart: always
+
+volumes:
+  drupal-modules:
+  drupal-profiles:
+  drupal-themes:
+  drupal-sites:
+  mysql-data:
